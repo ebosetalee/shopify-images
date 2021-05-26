@@ -1,16 +1,15 @@
-import express from "express"
+import express from "express";
 import imageController from "../controllers/images.js";
 
-const { addImages, addImage, getImages, deleteImage } = imageController
+const { addImage, getImage, getImages, deleteImage } = imageController;
 const router = express.Router();
-
-router.post("/", addImages);
 
 router.post("/", addImage);
 
-router.get("/", getImages);
+router.get("/:id", getImage);
+
+router.get("/:user_id", getImages);
 
 router.delete("/:id", deleteImage);
 
 export default router;
-
