@@ -24,53 +24,50 @@ const imageController = {
                 url: url,
                 user_id: id
             });
-            return res
-                .status(200)
-                .json({ message: "File Uploaded!", Id: new_image._id });
+            return { message: "File Uploaded!", Id: new_image._id };
         } catch (error) {
-            return res.status(400).json({ message: error });
+            return error;
         }
     },
     async getImage(id) {
         try {
             const image = await Image.findOne({ _id: id });
-            return res.status(200).json(image, {
-                details: [image._id, image.name, image.url, image.user_id]
-            });
+            return (
+                image,
+                {
+                    details: [image._id, image.name, image.url, image.user_id]
+                }
+            );
         } catch (error) {
-            return res.status(400).json({ message: error });
+            return error;
         }
     },
     async getImages(user_id) {
         try {
             const images = await Image.find({ user_id });
-            return res.status(200).json(
-                images.map((it) => {
-                    return {
-                        image: it,
-                        name: it.name,
-                        url: it.url,
-                        id: it._id
-                    };
-                })
-            );
+            return images.map((it) => {
+                return {
+                    image: it,
+                    name: it.name,
+                    url: it.url,
+                    id: it._id
+                };
+            });
         } catch (err) {
-            return res.status(400).json({ message: err });
+            return err;
         }
     },
     async deleteImage(id) {
         // const path = req.params.id;
         try {
-            const images = await Image.findByIdAndDelete(id).catch((err) => {
-                return res
-                    .status(400)
-                    .json({ message: "Database error," + err });
-            });
+            const images = await Image.findByIdAndDelete(id).catch(
+                (err) => err
+            );
             fs.unlinkSync(images.url);
         } catch (err) {
-            return res.status(400).json({ message: err });
+            return err;
         }
-        return res.status(200).json({ message: "File deleted" });
+        return err;
     }
 };
 
