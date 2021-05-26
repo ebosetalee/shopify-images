@@ -8,7 +8,7 @@ const Users = new Schema(
         lastname: { type: String, required: true },
         emailAddress: { type: String, unique: true, required: true },
         password: { type: String, unique: true, required: true, trim: true },
-        role: { type: String, required: true }
+        role: { type: String, enum: ["admin", "regular"], required: true }
     },
     { timestamps: true }
 );

@@ -13,14 +13,16 @@ const storage = multer.diskStorage({
 });
 
 const img = multer({ storage: storage });
-
+//name: req.file.filename,
+// url: req.file.path
 const imageController = {
-    async addImages(req, res, _next) {
+    async addImage(name, url, id) {
         //console.log(req.file);
         try {
             const new_image = await Image.create({
-                name: req.file.filename,
-                url: req.file.path
+                name: name,
+                url: url,
+                user_id: id
             });
             return res
                 .status(200)
@@ -29,41 +31,37 @@ const imageController = {
             return res.status(400).json({ message: error });
         }
     },
-    async addImage(req, res, next) {
-        //console.log(req.files);
+    async getImage(id) {
         try {
-            const files = req.files.map((file) => ({
-                name: file.filename,
-                url: file.path
-            }));
-            const new_images = await Image.create(files);
-            return res
-                .status(200)
-                .json({ message: "File Uploaded!", data: new_images });
-        } catch (error) {
-            console.log(error);
-            return res.status(400).json({
-                status: "Files not added to database",
-                message: error
+            const image = await Image.findOne({ _id: id });
+            return res.status(200).json(image, {
+                details: [image._id, image.name, image.url, image.user_id]
             });
+        } catch (error) {
+            return res.status(400).json({ message: error });
         }
     },
-    async getImages(req, res) {
+    async getImages(user_id) {
         try {
-            const images = await Image.find();
+            const images = await Image.find({ user_id });
             return res.status(200).json(
                 images.map((it) => {
-                    return { url: it.url, id: it._id };
+                    return {
+                        image: it,
+                        name: it.name,
+                        url: it.url,
+                        id: it._id
+                    };
                 })
             );
         } catch (err) {
             return res.status(400).json({ message: err });
         }
     },
-    async deleteImage(req, res) {
-        const path = req.params.id;
+    async deleteImage(id) {
+        // const path = req.params.id;
         try {
-            const images = await Image.findByIdAndDelete(path).catch((err) => {
+            const images = await Image.findByIdAndDelete(id).catch((err) => {
                 return res
                     .status(400)
                     .json({ message: "Database error," + err });
