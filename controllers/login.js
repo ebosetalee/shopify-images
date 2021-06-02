@@ -11,23 +11,22 @@ const signUp = async (req, res) => {
         const user = await getUserByEmail(emailAddress);
         if (user) {
             throw Error("User Already Exists");
-        } else {
-            const newuser = await createUser(
-                emailAddress,
-                password,
-                username,
-                role
-            );
-            const userbody = { username: newuser.username, role: newuser.role };
-            const token = jwt.sign(userbody, process.env.JWT, {
-                expiresIn: "1h"
-            });
-            res.status(200).json({
-                message: "User Account Created successfully",
-                data: newuser,
-                tokenid: token
-            });
         }
+        const newuser = await createUser(
+            emailAddress,
+            password,
+            username,
+            role
+        );
+        const userbody = { username: newuser.username, role: newuser.role };
+        const token = jwt.sign(userbody, process.env.JWT, {
+            expiresIn: "1h"
+        });
+        res.status(200).json({
+            message: "User Account Created successfully",
+            data: newuser,
+            tokenid: token
+        });
     } catch (error) {
         res.status(400).json({ message: err });
     }
@@ -68,5 +67,5 @@ const signIn = async (req, res) => {
 
 //const signOut = async(req, res) => {};
 
-const loginController = {signUp, signIn};
+const loginController = { signUp, signIn };
 export default loginController;

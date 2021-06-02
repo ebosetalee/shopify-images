@@ -1,9 +1,9 @@
 import Users from "../models/users.js";
 import bcrypt from "bcrypt";
 
-async function hashPassword(password) {
+function hashPassword(password) {
     try {
-        const newPassword = await bcrypt.hash(password, 10);
+        const newPassword = bcrypt.hash(password, 10);
         return newPassword;
     } catch (error) {
         return error;
