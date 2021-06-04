@@ -4,7 +4,7 @@ import { ExtractJwt } from "passport-jwt";
 const opts = {};
 
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opts.secretOrKey = "secret";
+opts.secretOrKey = process.env.JWT;
 opts.issuer = "accounts.examplesoft.com";
 opts.audience = "yoursite.net";
 passport.use(

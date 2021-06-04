@@ -8,8 +8,22 @@ router.post("/", addImage);
 
 router.get("/:id", getImage);
 
-router.get("/:user_id", getImages);
+router.get(
+    "/:user_id",
+    async (req, res, next) => {
+        await passport.authenticate("jwt", { session: false });
+        next();
+    },
+    getImages
+);
 
-router.delete("/:id", deleteImage);
+router.delete(
+    "/:id",
+    async (req, res, next) => {
+        await passport.authenticate("jwt", { session: false });
+        next();
+    },
+    deleteImage
+);
 
 export default router;
