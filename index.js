@@ -2,15 +2,18 @@ import express from "express";
 import mongoose from "mongoose";
 import imageRoutes from "./routes/images.js";
 import userRoutes from "./routes/users.js";
+import loginRoutes from "./routes/login.js";
+import passport from "passport";
+
+import "dotenv/config";
 
 const app = express();
-const LOCAL_MONGO_DB = "mongodb://127.0.0.1:27017/shopifyimages";
 const port = process.env.PORT || 4041;
 
 mongoose.Promise = global.Promise;
 
 mongoose
-    .connect(LOCAL_MONGO_DB, {
+    .connect(process.env.LOCAL_MONGO_DB, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useFindAndModify: false,
@@ -25,8 +28,14 @@ mongoose
 
 // Image controller
 app.use(express.json());
+
+app.use(passport.initialize());
+app.use(passport.session());
+require("./strategies/strategies")(passport);
+
 app.use("/api/images", imageRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/login", loginRoutes);
 
 app.listen(port, () => {
     console.log(`server is runnng on port: ${port}`);
