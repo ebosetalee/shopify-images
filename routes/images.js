@@ -1,10 +1,19 @@
 import express from "express";
 import imageController from "../controllers/images.js";
+import img from "../strategies/cloudinaryStrategies.js";
 
 const { addImage, getImage, getImages, deleteImage } = imageController;
 const router = express.Router();
 
-router.post("/", addImage);
+// img.single("image")
+router.post(
+    "/",
+    async (req, res, next) => {
+        img;
+        next();
+    },
+    addImage
+);
 
 router.get("/:id", getImage);
 

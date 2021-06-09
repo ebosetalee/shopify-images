@@ -12,16 +12,13 @@ const storage = multer.diskStorage({
     }
 });
 
-const img = multer({ storage: storage });
-//name: req.file.filename,
-// url: req.file.path
 const imageController = {
-    async addImage(name, url, id) {
-        //console.log(req.file);
+    async addImage(id) {
+        // console.log(req.file);
         try {
             const new_image = await Image.create({
-                name: name,
-                url: url,
+                name: req.file ? req.file.filename : null,
+                url: req.file ? req.file.url : null,
                 user_id: id
             });
             return { message: "File Uploaded!", Id: new_image._id };
