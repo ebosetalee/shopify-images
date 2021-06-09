@@ -1,5 +1,8 @@
-import { Strategy as JwtStrategy } from "passport-jwt";
-import { ExtractJwt } from "passport-jwt";
+import pkgs from "passport-jwt";
+import pkg from "passport-jwt";
+const { Strategy: JwtStrategy } = pkgs
+const { ExtractJwt } = pkg;
+import Users from "../models/users.js";
 
 function passportStrategy(passport) {
     const opts = {};
@@ -8,7 +11,7 @@ function passportStrategy(passport) {
     opts.secretOrKey = process.env.JWT;
     passport.use(
         new JwtStrategy(opts, function (jwt_payload, done) {
-            User.findOne({ id: jwt_payload.sub }, function (err, user) {
+            Users.findOne({ id: jwt_payload.sub }, '-password', function (err, user) {
                 if (err) {
                     return done(err, false);
                 }

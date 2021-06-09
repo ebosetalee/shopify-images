@@ -1,27 +1,14 @@
 import Image from "../models/images.js";
-import multer from "multer";
-import fs from "fs";
-
-const storage = multer.diskStorage({
-    destination: (_req, _file, cb) => {
-        cb(null, __dirname + "/imgs");
-    },
-    filename: (_req, file, cb) => {
-        //console.log(file.originalname);
-        cb(null, file.originalname);
-    }
-});
 
 const imageController = {
-    async addImage(id) {
-        // console.log(req.file);
+    async addImage(id, file) {
         try {
             const new_image = await Image.create({
-                name: req.file ? req.file.filename : null,
-                url: req.file ? req.file.url : null,
+                name: file ? file.filename : null,
+                url: file ? file.path : null,
                 user_id: id
             });
-            return { message: "File Uploaded!", Id: new_image._id };
+            return new_image;
         } catch (error) {
             return error;
         }
@@ -29,42 +16,26 @@ const imageController = {
     async getImage(id) {
         try {
             const image = await Image.findOne({ _id: id });
-            return (
-                image,
-                {
-                    details: [image._id, image.name, image.url, image.user_id]
-                }
-            );
+            return image
         } catch (error) {
             return error;
         }
     },
-    async getImages(user_id) {
+    async getImages(id) {
         try {
-            const images = await Image.find({ user_id });
-            return images.map((it) => {
-                return {
-                    image: it,
-                    name: it.name,
-                    url: it.url,
-                    id: it._id
-                };
-            });
+            const images = await Image.find({ "user_id": id });
+            return images
         } catch (err) {
             return err;
         }
     },
     async deleteImage(id) {
-        // const path = req.params.id;
         try {
-            const images = await Image.findByIdAndDelete(id).catch(
-                (err) => err
-            );
-            fs.unlinkSync(images.url);
+            const image = await Image.findByIdAndDelete(id);
+            return image;
         } catch (err) {
             return err;
         }
-        return err;
     }
 };
 
