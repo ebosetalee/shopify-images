@@ -1,12 +1,12 @@
+import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
-import imageRoutes from "./routes/images.js";
-import userRoutes from "./routes/users.js";
-import loginRoutes from "./routes/login.js";
 import passport from "passport";
-
-import "dotenv/config";
-
+import passportStrategy from "./strategies/strategies.js";
+import imageRoutes from "./routes/images.js";
+import loginRoutes from "./routes/login.js";
+import userRoutes from "./routes/users.js";
+//import uploads from "./strategies/cloudinaryStrategies.js"
 const app = express();
 const port = process.env.PORT || 4041;
 
@@ -19,7 +19,7 @@ mongoose
         useFindAndModify: false,
         useCreateIndex: true
     })
-    .then((connection) => {
+    .then(() => {
         console.log("Connected to Database....");
     })
     .catch((err) => {
@@ -28,10 +28,10 @@ mongoose
 
 // Image controller
 app.use(express.json());
-
+// app.use(uploads.cloudConfig)
 app.use(passport.initialize());
 app.use(passport.session());
-require("./strategies/strategies")(passport);
+passportStrategy(passport);
 
 app.use("/api/images", imageRoutes);
 app.use("/api/users", userRoutes);

@@ -1,4 +1,5 @@
 import express from "express";
+import passport from "passport";
 import userController from "../controllers/users.js";
 
 const router = express.Router();
