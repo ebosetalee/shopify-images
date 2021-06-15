@@ -25,6 +25,15 @@ const userController = {
             return error;
         }
     },
+    async getAllUsers(){
+        try {
+            const users = await Users.find()
+            return users
+        } catch (error) {
+            return error
+        }
+
+    },
     async getUserById(id) {
         try {
             const user = await Users.findById({ _id: id }, "-password");

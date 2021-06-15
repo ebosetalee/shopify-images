@@ -12,7 +12,6 @@ router.post(
     passport.authenticate("jwt", { session: false }),
     async (req, res) => {
         try {
-            console.log('req.file is', req.file)
             const file = req.file;
             const image = await addImage(req.user.id, file);
             return res.status(200).send(image);

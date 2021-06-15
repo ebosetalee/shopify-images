@@ -3,7 +3,8 @@ import passport from "passport";
 import userController from "../controllers/users.js";
 
 const router = express.Router();
-const { createUser, getUserById, updateUser, deleteUser } = userController;
+const { createUser, getUserById, updateUser, deleteUser, getAllUsers } =
+    userController;
 
 router.post("/", async (req, res) => {
     try {
@@ -21,12 +22,27 @@ router.post("/", async (req, res) => {
 });
 
 router.get(
-    "/",
+    "/:id",
     passport.authenticate("jwt", { session: false }),
     async (req, res) => {
         try {
             const user = await getUserById(req.user.id);
             return res.status(200).send(user);
+        } catch (error) {
+            return res
+                .status(400)
+                .json({ message: "something went wrong", error });
+        }
+    }
+);
+
+router.get(
+    "/",
+    passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
+        try {
+            const users = await getAllUsers();
+            return res.status(200).send(users);
         } catch (error) {
             return res
                 .status(400)
@@ -41,7 +57,7 @@ router.put(
     async (req, res) => {
         try {
             const id = req.params.id;
-            const item  = req.body
+            const item = req.body;
             const user = await updateUser(id, item);
             return res.status(200).send(user);
         } catch (error) {
