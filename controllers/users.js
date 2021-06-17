@@ -25,14 +25,13 @@ const userController = {
             return error;
         }
     },
-    async getAllUsers(){
+    async getAllUsers() {
         try {
-            const users = await Users.find()
-            return users
+            const users = await Users.find({}, "-password");
+            return users;
         } catch (error) {
-            return error
+            return error;
         }
-
     },
     async getUserById(id) {
         try {
@@ -52,7 +51,10 @@ const userController = {
     },
     async updateUser(id, item) {
         try {
-            const user = await Users.updateOne(
+            if (item.password) {
+                item.password = await hashPassword(item.password);
+            }
+            const user = await Users.findByIdAndUpdate(
                 { _id: id },
                 { $set: { ...item } }
             );

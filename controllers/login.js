@@ -1,7 +1,6 @@
 import userController from "../controllers/users.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import "dotenv/config";
 
 const { createUser, getUserByEmail } = userController;
 
@@ -11,7 +10,8 @@ const loginController = {
             const { emailAddress, password, username, role } = req.body;
             const user = await getUserByEmail(emailAddress);
             if (user) {
-                throw Error("User Already Exists");
+                throw "User Already Exists";
+                //return res.status(400).json({ message: "User Already Exists!"})
             }
             const newuser = await createUser(
                 emailAddress,
@@ -23,13 +23,13 @@ const loginController = {
             const token = jwt.sign(userbody, process.env.JWT, {
                 expiresIn: "1h"
             });
-            res.status(200).json({
+            return res.status(200).json({
                 message: "User Account Created successfully",
                 data: newuser,
                 tokenid: token
             });
         } catch (error) {
-            res.status(400).json({ message: err });
+            return res.status(400).json({ message: error });
         }
     },
 
@@ -38,14 +38,14 @@ const loginController = {
             const { emailAddress, password } = req.body;
             const user = await getUserByEmail(emailAddress);
             if (!user) {
-                throw Error("User Doesn't Exist");
+                throw "User Doesn't Exist";
             }
             const validPassword = await bcrypt.compare(password, user.password);
             if (!validPassword) {
-                throw Error("Invalid Password");
+                throw "Invalid Password";
             }
             const body = {
-                _id: user.id,
+                _id: user._id,
                 username: user.username,
                 role: user.role
             };
@@ -62,11 +62,9 @@ const loginController = {
                 tokenid: `Bearer ${token}`
             });
         } catch (error) {
-            res.status(400).json({ message: err });
+            res.status(400).json({ message: error });
         }
     }
 };
-
-//const signOut = async(req, res) => {};
 
 export default loginController;

@@ -1,16 +1,11 @@
-import dotenv from "dotenv";
-import path from "path"
-import pkg from "cloudinary";
-import pkgs from "multer-storage-cloudinary";
+import "dotenv/config";
+import path from "path";
+import { v2 as cloudinary } from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
 import multer from "multer";
-dotenv.config();
-
-const { v2: cloudinary } = pkg;
-const { CloudinaryStorage } = pkgs;
 
 const img = {};
 
-console.log("api key is", process.env.API_KEY);
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
     api_key: process.env.API_KEY,

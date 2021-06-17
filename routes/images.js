@@ -24,6 +24,22 @@ router.post(
 );
 
 router.get(
+    "/user/",
+    passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
+        try {
+            const id = req.user.id;
+            const images = await getImages(id);
+            return res.status(200).send(images);
+        } catch (error) {
+            return res
+                .status(400)
+                .json({ message: "something went wrong", error });
+        }
+    }
+);
+
+router.get(
     "/:id",
     passport.authenticate("jwt", { session: false }),
     async (req, res) => {
@@ -39,23 +55,6 @@ router.get(
     }
 );
 
-router.get(
-    "/user/:id",
-    passport.authenticate("jwt", { session: false }),
-    async (req, res) => {
-        try {
-            
-            const id = req.params.id
-            const images = await getImages(id);
-            return res.status(200).send(images);
-        } catch (error) {
-            return res
-                .status(400)
-                .json({ message: "something went wrong", error });
-        }
-    }
-);
-
 router.delete(
     "/:id",
     passport.authenticate("jwt", { session: false }),
@@ -63,7 +62,12 @@ router.delete(
         try {
             const id = req.params.id;
             const deletedImage = deleteImage(id);
-            return res.status(200).send(deletedImage);
+            return res
+                .status(200)
+                .send({
+                    message: "Image deleted successfully",
+                    details: deletedImage
+                });
         } catch (error) {
             return res
                 .status(400)

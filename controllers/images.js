@@ -16,22 +16,28 @@ const imageController = {
     async getImage(id) {
         try {
             const image = await Image.findOne({ _id: id });
-            return image
+            return image;
         } catch (error) {
             return error;
         }
     },
     async getImages(id) {
         try {
-            const images = await Image.find({ "user_id": id });
-            return images
+            const images = await Image.find(
+                { user_id: id, deleted_at: null },
+                "-deleted_at"
+            );
+            return images;
         } catch (err) {
             return err;
         }
     },
     async deleteImage(id) {
         try {
-            const image = await Image.findByIdAndDelete(id);
+            const image = await Image.updateOne(
+                { _id: id },
+                { deleted_at: new Date() }
+            );
             return image;
         } catch (err) {
             return err;

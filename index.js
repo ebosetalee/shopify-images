@@ -1,4 +1,4 @@
-import dotenv from "dotenv";
+import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
 import passport from "passport";
@@ -6,8 +6,6 @@ import passportStrategy from "./strategies/passport.js";
 import imageRoutes from "./routes/images.js";
 import loginRoutes from "./routes/login.js";
 import userRoutes from "./routes/users.js";
-
-dotenv.config()
 
 const app = express();
 const port = process.env.PORT || 4041;

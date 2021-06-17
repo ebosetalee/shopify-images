@@ -22,7 +22,7 @@ router.post("/", async (req, res) => {
 });
 
 router.get(
-    "/:id",
+    "/",
     passport.authenticate("jwt", { session: false }),
     async (req, res) => {
         try {
@@ -37,8 +37,8 @@ router.get(
 );
 
 router.get(
-    "/",
-    passport.authenticate("jwt", { session: false }),
+    "/all",
+    passport.authenticate("admin", { session: false }),
     async (req, res) => {
         try {
             const users = await getAllUsers();
@@ -51,12 +51,12 @@ router.get(
     }
 );
 
-router.put(
-    "/:id",
+router.patch(
+    "/",
     passport.authenticate("jwt", { session: false }),
     async (req, res) => {
         try {
-            const id = req.params.id;
+            const id = req.user.id;
             const item = req.body;
             const user = await updateUser(id, item);
             return res.status(200).send(user);
@@ -69,11 +69,11 @@ router.put(
 );
 
 router.delete(
-    "/:id",
+    "/",
     passport.authenticate("jwt", { session: false }),
     async (req, res) => {
         try {
-            const id = req.params.id;
+            const id = req.user.id;
             const user = await deleteUser(id);
             return res.status(200).send(user);
         } catch (error) {
