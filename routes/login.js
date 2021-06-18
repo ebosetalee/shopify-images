@@ -6,6 +6,6 @@ const { signIn, signUp } = loginController;
 
 router.post("/signup", signUp);
 
-router.get("/", signIn);
+router.post("/", signIn);
 
 export default router;
