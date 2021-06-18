@@ -1,38 +1,79 @@
 import express from "express";
+import passport from "passport";
 import imageController from "../controllers/images.js";
-import img from "../strategies/cloudinaryStrategies.js";
+import img from "../strategies/imageUpload.js";
 
 const { addImage, getImage, getImages, deleteImage } = imageController;
 const router = express.Router();
 
-// img.single("image")
 router.post(
     "/",
-    async (req, res, next) => {
-        img;
-        next();
-    },
-    addImage
+    img.saveImage,
+    passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
+        try {
+            const file = req.file;
+            const image = await addImage(req.user.id, file);
+            return res.status(200).send(image);
+        } catch (error) {
+            return res
+                .status(400)
+                .json({ message: "something went wrong", error });
+        }
+    }
 );
 
-router.get("/:id", getImage);
+router.get(
+    "/user/",
+    passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
+        try {
+            const id = req.user.id;
+            const images = await getImages(id);
+            return res.status(200).send(images);
+        } catch (error) {
+            return res
+                .status(400)
+                .json({ message: "something went wrong", error });
+        }
+    }
+);
 
 router.get(
-    "/:user_id",
-    async (req, res, next) => {
-        await passport.authenticate("jwt", { session: false });
-        next();
-    },
-    getImages
+    "/:id",
+    passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
+        try {
+            const id = req.params.id;
+            const image = await getImage(id);
+            return res.status(200).send(image);
+        } catch (error) {
+            return res
+                .status(400)
+                .json({ message: "something went wrong", error });
+        }
+    }
 );
 
 router.delete(
     "/:id",
-    async (req, res, next) => {
-        await passport.authenticate("jwt", { session: false });
-        next();
-    },
-    deleteImage
+    passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
+        try {
+            const id = req.params.id;
+            const deletedImage = deleteImage(id);
+            return res
+                .status(200)
+                .send({
+                    message: "Image deleted successfully",
+                    details: deletedImage
+                });
+        } catch (error) {
+            return res
+                .status(400)
+                .json({ message: "something went wrong", error });
+        }
+    }
 );
 
 export default router;

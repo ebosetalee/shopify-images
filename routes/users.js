@@ -3,35 +3,84 @@ import passport from "passport";
 import userController from "../controllers/users.js";
 
 const router = express.Router();
-const { createUser, getUserById, updateUser, deleteUser } = userController;
+const { createUser, getUserById, updateUser, deleteUser, getAllUsers } =
+    userController;
 
-router.post("/", createUser);
+router.post("/", async (req, res) => {
+    try {
+        const { emailAddress, username, password, role } = req.body;
+        const newUser = await createUser(
+            emailAddress,
+            password,
+            username,
+            role
+        );
+        return res.status(200).send(newUser);
+    } catch (error) {
+        return res.status(400).json({ message: "something went wrong", error });
+    }
+});
 
 router.get(
-    "/:id",
-    async (req, res, next) => {
-        await passport.authenticate("jwt", { session: false });
-        next();
-    },
-    getUserById
+    "/",
+    passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
+        try {
+            const user = await getUserById(req.user.id);
+            return res.status(200).send(user);
+        } catch (error) {
+            return res
+                .status(400)
+                .json({ message: "something went wrong", error });
+        }
+    }
+);
+
+router.get(
+    "/all",
+    passport.authenticate("admin", { session: false }),
+    async (req, res) => {
+        try {
+            const users = await getAllUsers();
+            return res.status(200).send(users);
+        } catch (error) {
+            return res
+                .status(400)
+                .json({ message: "something went wrong", error });
+        }
+    }
 );
 
 router.patch(
-    "/:d",
-    async (req, res, next) => {
-        await passport.authenticate("jwt", { session: false });
-        next();
-    },
-    updateUser
+    "/",
+    passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
+        try {
+            const id = req.user.id;
+            const item = req.body;
+            const user = await updateUser(id, item);
+            return res.status(200).send(user);
+        } catch (error) {
+            return res
+                .status(400)
+                .json({ message: "something went wrong", error });
+        }
+    }
 );
 
 router.delete(
-    "/:id",
-    async (req, res, next) => {
-        await passport.authenticate("jwt", { session: false });
-        next();
-    },
-    deleteUser
+    "/",
+    passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
+        try {
+            const id = req.user.id;
+            const user = await deleteUser(id);
+            return res.status(200).send(user);
+        } catch (error) {
+            return res
+                .status(400)
+                .json({ message: "something went wrong", error });
+        }
+    }
 );
-
 export default router;

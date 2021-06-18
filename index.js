@@ -2,11 +2,11 @@ import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
 import passport from "passport";
-import passportStrategy from "./strategies/strategies.js";
+import passportStrategy from "./strategies/passport.js";
 import imageRoutes from "./routes/images.js";
 import loginRoutes from "./routes/login.js";
 import userRoutes from "./routes/users.js";
-//import uploads from "./strategies/cloudinaryStrategies.js"
+
 const app = express();
 const port = process.env.PORT || 4041;
 
@@ -35,7 +35,7 @@ passportStrategy(passport);
 
 app.use("/api/images", imageRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/login", loginRoutes);
+app.use("/api/", loginRoutes);
 
 app.listen(port, () => {
     console.log(`server is runnng on port: ${port}`);
