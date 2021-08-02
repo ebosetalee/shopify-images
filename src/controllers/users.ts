@@ -1,4 +1,4 @@
-import Users from "../models/users.js";
+import Users from "../models/users";
 import bcrypt from "bcrypt";
 
 function hashPassword(password) {

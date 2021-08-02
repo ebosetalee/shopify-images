@@ -1,7 +1,7 @@
 import express from "express";
 import passport from "passport";
-import imageController from "../controllers/images.js";
-import img from "../strategies/imageUpload.js";
+import imageController from "../controllers/images";
+import img from "../strategies/imageUpload";
 
 const { addImage, getImage, getImages, deleteImage } = imageController;
 const router = express.Router();
@@ -12,8 +12,8 @@ router.post(
     passport.authenticate("jwt", { session: false }),
     async (req, res) => {
         try {
-            const file = req.file;
-            const image = await addImage(req.user.id, file);
+            const file = req["file"];
+            const image = await addImage(req.user?.["id"], file);
             return res.status(200).send(image);
         } catch (error) {
             return res
@@ -28,7 +28,7 @@ router.get(
     passport.authenticate("jwt", { session: false }),
     async (req, res) => {
         try {
-            const id = req.user.id;
+            const id = req["user"]?.["id"];
             const images = await getImages(id);
             return res.status(200).send(images);
         } catch (error) {

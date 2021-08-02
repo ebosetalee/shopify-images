@@ -4,7 +4,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import multer from "multer";
 
-const img = {};
+const img: {[x: string]: any} = {};
 
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
@@ -15,9 +15,9 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
     cloudinary,
     params: {
-        folder: "shopify-images",
-        allowedFormats: ["jpeg", "jpg", "png"],
-        use_filename: true
+        // folder: "shopify-images",
+        // allowedFormats: ["jpeg", "jpg", "png"],
+        // use_filename: true
     }
 });
 
@@ -46,4 +46,4 @@ img.saveImage = multer({
     }
 }).single("image");
 
-export default img;
+export = img;

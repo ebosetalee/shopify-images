@@ -1,4 +1,4 @@
-import Image from "../models/images.js";
+import Image from "../models/images";
 
 const imageController = {
     async addImage(id, file) {

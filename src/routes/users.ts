@@ -1,6 +1,6 @@
 import express from "express";
 import passport from "passport";
-import userController from "../controllers/users.js";
+import userController from "../controllers/users";
 
 const router = express.Router();
 const { createUser, getUserById, updateUser, deleteUser, getAllUsers } =
@@ -26,7 +26,7 @@ router.get(
     passport.authenticate("jwt", { session: false }),
     async (req, res) => {
         try {
-            const user = await getUserById(req.user.id);
+            const user = await getUserById(req.user?.["id"]);
             return res.status(200).send(user);
         } catch (error) {
             return res
@@ -56,7 +56,7 @@ router.patch(
     passport.authenticate("jwt", { session: false }),
     async (req, res) => {
         try {
-            const id = req.user.id;
+            const id = req.user?.["id"];
             const item = req.body;
             const user = await updateUser(id, item);
             return res.status(200).send(user);
@@ -73,7 +73,7 @@ router.delete(
     passport.authenticate("jwt", { session: false }),
     async (req, res) => {
         try {
-            const id = req.user.id;
+            const id = req.user?.["id"];
             const user = await deleteUser(id);
             return res.status(200).send(user);
         } catch (error) {
