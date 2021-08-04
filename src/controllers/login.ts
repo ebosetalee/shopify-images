@@ -1,4 +1,3 @@
-import Users from "../models/users";
 import userController from "../controllers/users";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
