@@ -3,6 +3,7 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import { StatusCodes } from "http-status-codes";
 import { app } from "../src/app";
+import Users from "../src/models/users";
 
 let http: supertest.SuperTest<supertest.Test>;
 let mongod: MongoMemoryServer;
@@ -29,7 +30,11 @@ afterAll(async () => {
 });
 
 describe("user sign up", () => {
-  test("creates a new user if the email address has not signed up already", async () => {
+  beforeEach(async () => {
+    await Users.deleteMany({});
+  });
+
+  test("creates a new user if the email address is available", async () => {
     const credentials = {
       emailAddress: "new_user@example.com",
       password: "you can't see me",
@@ -47,5 +52,23 @@ describe("user sign up", () => {
     expect(body.data.emailAddress).toBe(credentials.emailAddress);
     expect(body.data.role).toBe(credentials.role);
     expect(body.data.username).toBe(credentials.username);
+  });
+
+  test("fails if the email address is taken", async () => {
+    const credentials = {
+      emailAddress: "new_user@example.com",
+      password: "you can't see me",
+      username: "emmanuella",
+      role: "admin"
+    };
+
+    await http.post("/api/signup").send(credentials).expect(StatusCodes.OK);
+
+    const { body } = await http
+      .post("/api/signup")
+      .send(credentials)
+      .expect(StatusCodes.BAD_REQUEST);
+
+    expect(body.message).toMatch(/user already exists/i);
   });
 });
