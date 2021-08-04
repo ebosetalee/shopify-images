@@ -9,11 +9,9 @@ const loginController = {
   async signUp(req, res) {
     try {
       const { emailAddress, password, username, role } = req.body;
-      // const user = await getUserByEmail(emailAddress);
-      const user = await Users.findOne({ emailAddress }).exec();
+      const user = await getUserByEmail(emailAddress);
       if (user) {
-        throw "User Already Exists";
-        //return res.status(400).json({ message: "User Already Exists!"})
+        return res.status(400).json({ message: "User Already Exists!" });
       }
       const newuser = await createUser(emailAddress, password, username, role);
       const userbody = { username: newuser.username, role: newuser.role };
@@ -27,7 +25,9 @@ const loginController = {
       });
     } catch (error) {
       console.error(error);
-      return res.status(400).json({ message: error });
+      return res.status(500).json({
+        message: "Something went wrong, please report to the operators."
+      });
     }
   },
 
